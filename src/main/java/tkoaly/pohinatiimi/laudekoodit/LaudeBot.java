@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.util.ArrayList;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 
 public class LaudeBot extends TelegramLongPollingBot {
 
@@ -27,7 +28,8 @@ public class LaudeBot extends TelegramLongPollingBot {
 
         // Initialize answer message
         SendMessage answer = new SendMessage()
-                .setChatId(chatId);
+                .setChatId(chatId)
+                .setParseMode(ParseMode.HTML);
         
         Document doc = Jsoup.parse(fetchHeppa());
         Element table = doc.select("table").get(0);
@@ -36,7 +38,7 @@ public class LaudeBot extends TelegramLongPollingBot {
         // Choose text for answer
         int inputnum = Integer.parseInt(text.substring(4));
         if (inputnum > moviesize) {
-            answer.setText("These are not the answers you're looking for. Amount of movies is " + moviesize);
+            answer.setText("These are not the answers you're looking for. Amount of movies is " + moviesize + ".");
         }
         else if (text.substring(0, 4).equals("/top")) {
 
@@ -103,10 +105,10 @@ public class LaudeBot extends TelegramLongPollingBot {
 
         for (int i = 1; i < Math.min(num + 1, movies.size()); i++) {
             Elements fields = movies.get(i).select("td");
-
+            
             String movieEntry = "";
-
-            movieEntry += fields.get(0).text();
+            
+            movieEntry += fields.get(0);
             movieEntry += " - ";
             movieEntry += fields.get(3).text();
             movieEntry += " ääntä";
@@ -118,7 +120,7 @@ public class LaudeBot extends TelegramLongPollingBot {
     }
 
     private String buildMessage() {
-        String msg = "";
+        String msg = "<b>Äänestystulos tällä hetkellä: </b> " + "\n";
         ArrayList<String> movies = parseTopMovies(fetchHeppa());
 
         for (int i = 0; i < movies.size(); i++) {
