@@ -37,11 +37,11 @@ public class LaudeBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "INSERT BOT USERNAME HERE";
+        return "Heppabot";
     }
 
     @Override
     public String getBotToken() {
-        return dotenv.get("BOT_TOKEN");
+        return dotenv.get("1002374578:AAHl6U-dHf8KvMeINgACOQaI2WFfS-9bKQs");
     }
 }
