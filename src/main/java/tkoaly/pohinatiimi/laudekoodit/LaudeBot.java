@@ -5,9 +5,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.jsoup.Jsoup;
+import java.io.IOException;
 
 public class LaudeBot extends TelegramLongPollingBot {
-
+    
+        private static final String heppaUrl = "https://heppa.herokuapp.com/candidates";
     private Dotenv dotenv = Dotenv.load();
 
     @Override
@@ -21,8 +24,8 @@ public class LaudeBot extends TelegramLongPollingBot {
             .setChatId(chatId);
         
         // Choose text for answer
-        if (text.equals("/heppabot")) {
-            answer.setText("World!");
+        if (text.equals("Hello")) {
+            answer.setText(fetchHeppa().substring(0,100));
         } else {
             answer.setText("Happy hacking!");
         }
@@ -43,5 +46,18 @@ public class LaudeBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return dotenv.get("BOT_TOKEN");
+    }
+    
+    
+    private String fetchHeppa() {
+        String heppaHtml = "";
+        
+        try {
+            heppaHtml = Jsoup.connect(heppaUrl).get().html();
+        } catch (Exception e) {
+            
+        }
+
+        return heppaHtml;
     }
 }
