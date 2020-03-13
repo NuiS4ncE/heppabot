@@ -7,14 +7,19 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.jsoup.Jsoup;
 import java.io.IOException;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import java.util.ArrayList;
 
 public class LaudeBot extends TelegramLongPollingBot {
     
-        private static final String heppaUrl = "https://heppa.herokuapp.com/candidates";
+    private static final String heppaUrl = "https://heppa.herokuapp.com/candidates";
     private Dotenv dotenv = Dotenv.load();
 
     @Override
     public void onUpdateReceived(Update update) {
+        
         
         Long chatId = update.getMessage().getChatId();
         String text = update.getMessage().getText();
@@ -25,7 +30,7 @@ public class LaudeBot extends TelegramLongPollingBot {
         
         // Choose text for answer
         if (text.equals("Hello")) {
-            answer.setText(fetchHeppa().substring(0,100));
+            answer.setText(buildMessage());
         } else {
             answer.setText("Happy hacking!");
         }
@@ -60,4 +65,59 @@ public class LaudeBot extends TelegramLongPollingBot {
 
         return heppaHtml;
     }
+    
+    private String findMovie(){
+        try{
+        String url = "https://heppa.herokuapp.com/candidates";
+        Document document = Jsoup.connect(url).get();
+        Elements links = document.select("a[href]");
+        String movie = "";
+        for (Element link : links){
+            if(link.text() == "Edit" || link.text() == "Login" || link.text() == "Add a candidate") continue;
+            movie += link.text() + " " + "\n";
+            
+            System.out.println("Movie: " + movie);
+        } 
+                return movie;
+        } catch (Exception e){
+            System.out.println(e.toString());
+            return e.toString().substring(0,100);
+        }
+    }
+    
+    private ArrayList<String> parseTopMovies(String heppaHtml) {
+        Document doc = Jsoup.parse(heppaHtml);
+        Element table = doc.select("table").get(0);
+        Elements movies = table.select("tr");
+        
+        ArrayList<String> topMovies = new ArrayList<>();
+
+        for (int i = 1; i < 6; i++) {
+            Elements fields = movies.get(i).select("td");
+            
+            String movieEntry = "";
+            
+            movieEntry += fields.get(0).text();
+            movieEntry += " - ";
+            movieEntry += fields.get(3).text();
+            movieEntry += " ääntä";
+
+            topMovies.add(movieEntry);
+        }
+
+        return topMovies;
+    }
+
+    private String buildMessage() {
+        String msg = "";
+        ArrayList<String> movies = parseTopMovies(fetchHeppa());
+        
+        for (int i = 0; i < movies.size(); i++) {
+            msg += movies.get(i);
+            msg += "\n";
+        }
+
+        return msg;
+    }
+    
 }
