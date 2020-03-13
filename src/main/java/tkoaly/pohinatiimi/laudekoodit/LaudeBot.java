@@ -21,7 +21,7 @@ public class LaudeBot extends TelegramLongPollingBot {
             .setChatId(chatId);
         
         // Choose text for answer
-        if (text.equals("Hello")) {
+        if (text.equals("/heppabot")) {
             answer.setText("World!");
         } else {
             answer.setText("Happy hacking!");
@@ -37,11 +37,11 @@ public class LaudeBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "Heppabot";
+        return "official_heppabot";
     }
 
     @Override
     public String getBotToken() {
-        return dotenv.get("1002374578:AAHl6U-dHf8KvMeINgACOQaI2WFfS-9bKQs");
+        return dotenv.get("BOT_TOKEN");
     }
 }
