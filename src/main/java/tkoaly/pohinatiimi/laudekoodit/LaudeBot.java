@@ -30,29 +30,6 @@ public class LaudeBot extends TelegramLongPollingBot {
         SendMessage answer = new SendMessage()
                 .setChatId(chatId)
                 .setParseMode(ParseMode.HTML);
-
-       /* Document doc = Jsoup.parse(fetchHeppa());
-        Element table = doc.select("table").get(0);
-        Elements movies = table.select("tr");
-        moviesize = movies.size() - 1;
-        // Choose text for answer
-        System.out.println(text);
-        if (text.substring(0, 4).equals("/top")) {
-            inputnum = Integer.parseInt(text.substring(4));
-        }
-        if (text.equals("/all")) {
-            System.out.println("/list kutsuttu ja moviesize on: " + moviesize);
-            num = moviesize;
-            answer.setText(buildMessage());
-        } else if (inputnum > moviesize) {
-            answer.setText("These are not the answers you're looking for. Elokuvien määrä on " + moviesize + ".");
-        } else if (text.substring(0, 4).equals("/top")) {
-
-            num = inputnum;
-            answer.setText(buildMessage());
-        } else {
-            answer.setText("Whatchu talking about, foo!");
-        }*/ 
        
        answer.setText(inputHandling(text));
 
@@ -78,7 +55,7 @@ public class LaudeBot extends TelegramLongPollingBot {
             inputnum = Integer.parseInt(text.substring(4));
         }
         if (text.equals("/all")) {
-            System.out.println("/list kutsuttu ja moviesize on: " + moviesize);
+            System.out.println("/all kutsuttu ja moviesize on: " + moviesize);
             num = moviesize;
             answer = buildMessage();
         } else if (inputnum > moviesize) {

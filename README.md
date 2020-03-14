@@ -1,7 +1,8 @@
 Heppabot created by NuiS4ncE https://github.com/NuiS4ncE, PPeltola https://github.com/PPeltola and luxville https://github.com/luxville.
 
 # Heppabot
-Heppabot is a Java program that parses HTML from https://heppa.herokuapp.com/candidates. Bot is meant for University of Helsinki CS students to get voting statistics from aforementioned website.
+Heppabot is a Java program that parses HTML from https://heppa.herokuapp.com/candidates. Bot is meant for University of Helsinki CS students to get voting statistics from aforementioned website. 
+Heppabot can be found on Telegram with username @official_heppabot . 
 
 ## Commands
 
