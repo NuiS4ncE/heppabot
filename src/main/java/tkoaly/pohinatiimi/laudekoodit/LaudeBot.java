@@ -24,24 +24,23 @@ public class LaudeBot extends TelegramLongPollingBot {
 
         Long chatId = update.getMessage().getChatId();
         String text = update.getMessage().getText();
-        
-        int inputnum = 0;
+
+        // int inputnum = 0;
         // Initialize answer message
         SendMessage answer = new SendMessage()
                 .setChatId(chatId)
                 .setParseMode(ParseMode.HTML);
 
-        Document doc = Jsoup.parse(fetchHeppa());
+       /* Document doc = Jsoup.parse(fetchHeppa());
         Element table = doc.select("table").get(0);
         Elements movies = table.select("tr");
         moviesize = movies.size() - 1;
         // Choose text for answer
         System.out.println(text);
-        String inputString = text;
-        if(text.substring(0,4).equals("/top")){
-        inputnum = Integer.parseInt(text.substring(4));
+        if (text.substring(0, 4).equals("/top")) {
+            inputnum = Integer.parseInt(text.substring(4));
         }
-        if (text.equals("/list")) {
+        if (text.equals("/all")) {
             System.out.println("/list kutsuttu ja moviesize on: " + moviesize);
             num = moviesize;
             answer.setText(buildMessage());
@@ -53,7 +52,9 @@ public class LaudeBot extends TelegramLongPollingBot {
             answer.setText(buildMessage());
         } else {
             answer.setText("Whatchu talking about, foo!");
-        }
+        }*/ 
+       
+       answer.setText(inputHandling(text));
 
         // Send message
         try {
@@ -61,6 +62,35 @@ public class LaudeBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private String inputHandling(String text) {
+        String answer = "";
+        int inputnum = 0;
+
+        Document doc = Jsoup.parse(fetchHeppa());
+        Element table = doc.select("table").get(0);
+        Elements movies = table.select("tr");
+        moviesize = movies.size() - 1;
+        // Choose text for answer
+        System.out.println(text);
+        if (text.substring(0, 4).equals("/top")) {
+            inputnum = Integer.parseInt(text.substring(4));
+        }
+        if (text.equals("/all")) {
+            System.out.println("/list kutsuttu ja moviesize on: " + moviesize);
+            num = moviesize;
+            answer = buildMessage();
+        } else if (inputnum > moviesize) {
+            answer = "These are not the answers you're looking for. Elokuvien määrä on " + moviesize + ".";
+        } else if (text.substring(0, 4).equals("/top")) {
+
+            num = inputnum;
+            answer = buildMessage();
+        } else {
+            answer = "Whatchu talking about, foo!";
+        }
+        return answer;
     }
 
     @Override
@@ -85,25 +115,6 @@ public class LaudeBot extends TelegramLongPollingBot {
         return heppaHtml;
     }
 
-    /* private String findMovie(){
-        try{
-        String url = "https://heppa.herokuapp.com/candidates";
-        Document document = Jsoup.connect(url).get();
-        Elements links = document.select("a[href]");
-        String movie = "";
-        for (Element link : links){
-            if(link.text() == "Edit" || link.text() == "Login" || link.text() == "Add a candidate") continue;
-            movie += link.text() + " " + "\n";
-            
-            System.out.println("Movie: " + movie);
-        } 
-                return movie;
-        } catch (Exception e){
-            System.out.println(e.toString());
-            return e.toString().substring(0,100);
-        }
-    } */
-    
     private ArrayList<String> parseTopMovies(String heppaHtml) {
         Document doc = Jsoup.parse(heppaHtml);
         Element table = doc.select("table").get(0);
@@ -139,12 +150,33 @@ public class LaudeBot extends TelegramLongPollingBot {
         return msg;
     }
 
+    private ArrayList<String> parseTopSameVotes(String heppaHtml) {
+        Document doc = Jsoup.parse(heppaHtml);
+        Element table = doc.select("table").get(0);
+        Elements movies = table.select("tr");
+
+        ArrayList<String> topMovies = new ArrayList<>();
+
+        for (int i = 1; i < Math.min(num + 1, movies.size()); i++) {
+            Elements fields = movies.get(i).select("td");
+
+            String movieEntry = "";
+
+            movieEntry += fields.get(0).text();
+            movieEntry += " - ";
+            movieEntry += fields.get(3).text();
+            movieEntry += " ääntä";
+
+            topMovies.add(movieEntry);
+        }
+
+        return topMovies;
+    }
+
     private String topSameVotes() {
         String msg = "<b>Äänestystulos tällä hetkellä: </b> " + "\n";
-        //num = moviesize.size();
         ArrayList<String> movies = parseTopMovies(fetchHeppa());
-        for (int i = 1; i < movies.size(); i++) {                
-            msg += "lol";
+        for (int i = 1; i < movies.size(); i++) {
 
             if (movies.get(i) == movies.get(i - 1)) {
                 msg += movies.get(i);
