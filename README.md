@@ -10,12 +10,7 @@ Heppabot is a Java program that parses HTML from https://heppa.herokuapp.com/can
 
 # Example bot and guide
 
-## Prerequisites
-
-  - Telegram account
-  - Some knowledge of git
-
-## Creating your first bot
+## Creating a heppabot on Telegram
 
 1. Fork or clone this repository
 2. Go to https://telegram.me/BotFather
